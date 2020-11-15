@@ -1,5 +1,7 @@
 package ru.test.app.atm;
 
+import ru.test.app.processing.Bank;
+
 import java.util.Arrays;
 
 public class ATM {

@@ -1,4 +1,4 @@
-package ru.test.app.atm;
+package ru.test.app.processing;
 
 import java.util.HashMap;
 import java.util.Map;
