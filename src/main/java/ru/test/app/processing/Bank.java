@@ -6,17 +6,17 @@ import java.util.Optional;
 
 public class Bank {
     // {'accountNumber': {'pin': 1234, 'currency': 'EUR', 'balance': 100.00}}
-    private Map<String, Map<String, String>> accounts = new HashMap();
+    private Map<String, Map<String, String>> accounts = new HashMap<>();
 
     public Bank(){
-        Map<String, String> accountDetails = new HashMap();
+        Map<String, String> accountDetails = new HashMap<>();
         accountDetails.put("pin", "1234");
         accountDetails.put("currency", "EUR");
         accountDetails.put("balance", "100.00");
 
         accounts.put("1234567891234567", accountDetails);
 
-        Map<String, String> accountDetails2 = new HashMap();
+        Map<String, String> accountDetails2 = new HashMap<>();
         accountDetails2.put("pin", "4321");
         accountDetails2.put("currency", "RUR");
         accountDetails2.put("balance", "10000.00");
