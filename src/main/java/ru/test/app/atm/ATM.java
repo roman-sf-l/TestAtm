@@ -12,7 +12,7 @@ public class ATM {
     private Screen screen = new Screen();
     private KeyPad keyPad = new KeyPad();
     private Bank bank = new Bank();
-    private CashDispenser cashDispenser;
+    private CashDispenser cashDispenser = new CashDispenser();
 
     private enum Actions{
         BALANCE_INQUIRY,
@@ -52,7 +52,8 @@ public class ATM {
         screen.displayMessage("Please choose an action:");
         Arrays.stream(Actions.values()).forEach(action -> screen.displayMessage(action.ordinal() + 1 + ". " + action.toString().replace("_", " ")));
 
-        return keyPad.getInput();
+        String menuIndex = keyPad.getInput();
+        return menuIndex.matches("\\d+") ? menuIndex : "-1";
     }
 
     public void execute(int actionIndex){
@@ -63,12 +64,58 @@ public class ATM {
                 case BALANCE_INQUIRY:
                     screen.displayMessage("Balance: " + bank.getAccountBalance(account) + " " + bank.getAccountCurrency(account));
                     break;
+                case WITHDRAWAL:
+                    float amountWithdrawal = getEnteredAmount();
+                    if(!isAmountIllegal(amountWithdrawal)){
+                        withdrawal(amountWithdrawal);
+                    }
+                    break;
+                case DEPOSIT:
+                    float amountDeposit = getEnteredAmount();
+                    if(!isAmountIllegal(amountDeposit)){
+                        deposit(amountDeposit);
+                    }
+                    break;
                 case EXIT:
                     screen.displayMessage("See you later!");
                     isExit = true;
                     break;
             }
         }
+    }
+
+    private void withdrawal(float amount){
+        float accountBalance = Float.parseFloat(bank.getAccountBalance(account));
+        if(amount > accountBalance){
+            screen.displayMessage("You don't have enough money.");
+        }
+        else{
+            if(cashDispenser.decreaseDispenser(amount)){
+                bank.decreaseBalance(account, amount);
+            }
+            else{
+                screen.displayMessage("ATM doesn't have enough money.");
+            }
+        }
+    }
+
+    private void deposit(float amount){
+        cashDispenser.increaseDispenser(amount);
+        bank.increaseBalance(account, amount);
+    }
+
+    private float getEnteredAmount(){
+        screen.displayMessage("Enter amount:");
+        String amount = keyPad.getInput();
+        return amount.matches("[\\d.]+") ? Float.parseFloat(amount) : 0;
+    }
+
+    private boolean isAmountIllegal(float amount){
+        if(amount <= 0){
+            screen.displayMessage("Amount cannot be 0 or less than 0.");
+            return true;
+        }
+        return false;
     }
 
     public boolean getIsExit(){

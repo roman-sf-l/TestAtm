@@ -6,7 +6,7 @@ import java.util.Optional;
 
 public class Bank {
     // {'accountNumber': {'pin': 1234, 'currency': 'EUR', 'balance': 100.00}}
-    private Map<String, Map<String, String>> accounts = new HashMap<>();
+    private static Map<String, Map<String, String>> accounts = new HashMap<>();
 
     public Bank(){
         Map<String, String> accountDetails = new HashMap<>();
@@ -43,5 +43,17 @@ public class Bank {
                 .map(key -> key.getValue().get("currency"))
                 .findFirst()
                 .get();
+    }
+
+    public void increaseBalance(String account, float amount){
+        accounts.get(account).computeIfPresent("balance", (key, value) ->
+                { Float balance = Float.parseFloat(value) + amount; return balance.toString(); }
+            );
+    }
+
+    public void decreaseBalance(String account, float amount){
+        accounts.get(account).computeIfPresent("balance", (key, value) ->
+                { Float balance = Float.parseFloat(value) - amount; return balance.toString(); }
+        );
     }
 }
