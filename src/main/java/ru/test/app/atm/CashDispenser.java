@@ -2,13 +2,13 @@ package ru.test.app.atm;
 
 public class CashDispenser {
 
-    private static float cashAmount = 100000;
+    private static double cashAmount = 100000;
 
-    public void increaseDispenser(float amount){
+    public void increaseDispenser(double amount){
         cashAmount += amount;
     }
 
-    public boolean decreaseDispenser(float amount){
+    public boolean decreaseDispenser(double amount){
         if(cashAmount < amount){
             return false;
         }

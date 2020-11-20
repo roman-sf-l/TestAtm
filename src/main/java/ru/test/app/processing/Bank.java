@@ -14,7 +14,7 @@ public class Bank {
         accountDetails.put("currency", "EUR");
         accountDetails.put("balance", "100.00");
 
-        accounts.put("1234567891234567", accountDetails);
+        accounts.put("`1234567891234567`", accountDetails);
 
         Map<String, String> accountDetails2 = new HashMap<>();
         accountDetails2.put("pin", "4321");
@@ -45,15 +45,15 @@ public class Bank {
                 .get();
     }
 
-    public void increaseBalance(String account, float amount){
+    public void increaseBalance(String account, double amount){
         accounts.get(account).computeIfPresent("balance", (key, value) ->
-                { Float balance = Float.parseFloat(value) + amount; return balance.toString(); }
+                { Double balance = Double.parseDouble(value) + amount; return balance.toString(); }
             );
     }
 
-    public void decreaseBalance(String account, float amount){
+    public void decreaseBalance(String account, double amount){
         accounts.get(account).computeIfPresent("balance", (key, value) ->
-                { Float balance = Float.parseFloat(value) - amount; return balance.toString(); }
+                { Double balance = Double.parseDouble(value) - amount; return balance.toString(); }
         );
     }
 }

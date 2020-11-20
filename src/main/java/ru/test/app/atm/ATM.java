@@ -65,13 +65,13 @@ public class ATM {
                     screen.displayMessage("Balance: " + bank.getAccountBalance(account) + " " + bank.getAccountCurrency(account));
                     break;
                 case WITHDRAWAL:
-                    float amountWithdrawal = getEnteredAmount();
+                    double amountWithdrawal = getEnteredAmount();
                     if(!isAmountIllegal(amountWithdrawal)){
                         withdrawal(amountWithdrawal);
                     }
                     break;
                 case DEPOSIT:
-                    float amountDeposit = getEnteredAmount();
+                    double amountDeposit = getEnteredAmount();
                     if(!isAmountIllegal(amountDeposit)){
                         deposit(amountDeposit);
                     }
@@ -84,8 +84,8 @@ public class ATM {
         }
     }
 
-    private void withdrawal(float amount){
-        float accountBalance = Float.parseFloat(bank.getAccountBalance(account));
+    private void withdrawal(double amount){
+        double accountBalance = Double.parseDouble(bank.getAccountBalance(account));
         if(amount > accountBalance){
             screen.displayMessage("You don't have enough money.");
         }
@@ -99,18 +99,18 @@ public class ATM {
         }
     }
 
-    private void deposit(float amount){
+    private void deposit(double amount){
         cashDispenser.increaseDispenser(amount);
         bank.increaseBalance(account, amount);
     }
 
-    private float getEnteredAmount(){
+    private double getEnteredAmount(){
         screen.displayMessage("Enter amount:");
         String amount = keyPad.getInput();
-        return amount.matches("[\\d.]+") ? Float.parseFloat(amount) : 0;
+        return amount.matches("[\\d.]+") ? Double.parseDouble(amount) : 0;
     }
 
-    private boolean isAmountIllegal(float amount){
+    private boolean isAmountIllegal(double amount){
         if(amount <= 0){
             screen.displayMessage("Amount cannot be 0 or less than 0.");
             return true;
