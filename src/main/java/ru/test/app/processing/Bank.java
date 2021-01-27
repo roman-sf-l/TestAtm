@@ -1,59 +1,44 @@
 package ru.test.app.processing;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.ArrayList;
 
 public class Bank {
-    // {'accountNumber': {'pin': 1234, 'currency': 'EUR', 'balance': 100.00}}
-    private static Map<String, Map<String, String>> accounts = new HashMap<>();
+    private ArrayList<Account> accounts = new ArrayList<>();
 
     public Bank(){
-        Map<String, String> accountDetails = new HashMap<>();
-        accountDetails.put("pin", "1234");
-        accountDetails.put("currency", "EUR");
-        accountDetails.put("balance", "100.00");
+        Account account1 = new Account("1234567891234567", "1234", 100.00, Currency.RUB);
+        Account account2 = new Account("2121222122121212", "4321", 200.00, Currency.USD);
 
-        accounts.put("`1234567891234567`", accountDetails);
-
-        Map<String, String> accountDetails2 = new HashMap<>();
-        accountDetails2.put("pin", "4321");
-        accountDetails2.put("currency", "RUR");
-        accountDetails2.put("balance", "10000.00");
-
-        accounts.put("2121222122121212", accountDetails2);
+        accounts.add(account1);
+        accounts.add(account2);
     }
 
     public boolean isAccountCorrect(String account, String pin){
-        Optional<Map<String, String>> accountNumber = Optional.ofNullable(accounts.get(account));
-        return accountNumber.isPresent() && accountNumber.get().get("pin").equals(pin);
+        return accounts.stream().anyMatch(a -> a.getAccount().equals(account) && a.getPin().equals(pin));
     }
 
-    public String getAccountBalance(String account){
-        return accounts.entrySet().stream()
-                .filter(item -> item.getKey().equals(account))
-                .map(key -> key.getValue().get("balance"))
-                .findFirst()
-                .orElse("0.00");
+    public Double getAccountBalance(String account){
+        return accounts.stream().filter(a -> a.getAccount().equals(account)).findFirst().get().getBalance();
     }
 
-    public String getAccountCurrency(String account){
-        return accounts.entrySet().stream()
-                .filter(item -> item.getKey().equals(account))
-                .map(key -> key.getValue().get("currency"))
-                .findFirst()
-                .get();
+    public Currency getAccountCurrency(String account){
+        return accounts.stream().filter(a -> a.getAccount().equals(account)).findFirst().get().getCurrency();
     }
 
-    public void increaseBalance(String account, double amount){
-        accounts.get(account).computeIfPresent("balance", (key, value) ->
-                { Double balance = Double.parseDouble(value) + amount; return balance.toString(); }
-            );
+    public void decreaseBalance(String clientAccount, double clientAmount){
+        for(Account account: accounts){
+            if(account.getAccount().equals(clientAccount)){
+                account.setBalance(account.getBalance() - clientAmount);
+            }
+        }
     }
 
-    public void decreaseBalance(String account, double amount){
-        accounts.get(account).computeIfPresent("balance", (key, value) ->
-                { Double balance = Double.parseDouble(value) - amount; return balance.toString(); }
-        );
+    public void increaseBalance(String clientAccount, double clientAmount){
+        for(Account account: accounts){
+            if(account.getAccount().equals(clientAccount)){
+                account.setBalance(account.getBalance() + clientAmount);
+            }
+        }
     }
+
 }

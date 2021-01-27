@@ -9,4 +9,9 @@ public class KeyPad {
     public String getInput(){
         return input.nextLine();
     }
+
+    public double getAmount(){
+        String amount = getInput();
+        return amount.isEmpty() ? 0.00 : Double.valueOf(amount);
+    }
 }

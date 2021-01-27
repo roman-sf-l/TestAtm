@@ -1,125 +1,61 @@
 package ru.test.app.atm;
 
+import ru.test.app.exception.AtmAmountException;
 import ru.test.app.processing.Bank;
 
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.function.BiPredicate;
+import java.util.function.Predicate;
 
 public class ATM {
 
-    private boolean isAccountAuthenticated = false;
-    private boolean isExit = false;
-    private String account;
-    private Screen screen = new Screen();
-    private KeyPad keyPad = new KeyPad();
     private Bank bank = new Bank();
-    private CashDispenser cashDispenser = new CashDispenser();
+    private CashDispenser cashDispenser;
+    private BiPredicate<String, String> isPanPinCorrect = (pan, pin) -> pan.matches("^\\d{16,}$") && pin.matches("^\\d{4}$");
 
-    private enum Actions{
-        BALANCE_INQUIRY,
-        WITHDRAWAL,
-        DEPOSIT,
-        EXIT
+    public ATM(CashDispenser cashDispenser) {
+        this.cashDispenser = cashDispenser;
     }
 
-    public boolean isAccountAuthenticated(){
-        screen.displayMessage("Please enter a card number: ");
-        account = keyPad.getInput();
-
-        if(account.matches("\\d{16,}")){
-            screen.displayMessage("Please enter a pin code: ");
-            String pin = keyPad.getInput();
-
-            if(pin.matches("\\d{4}")){
-                if(bank.isAccountCorrect(account, pin)){
-                    isAccountAuthenticated = true;
-                }
-                else{
-                    screen.displayMessage("Cannot find a card.");
-                }
-            }
-            else {
-                screen.displayMessage("You entered an invalid pin code.");
-            }
-        }
-        else{
-            screen.displayMessage("You entered an invalid account number.");
-        }
-
-        return isAccountAuthenticated;
+    public boolean checkAccount(String account, String pin){
+        return isPanPinCorrect.test(account, pin) && bank.isAccountCorrect(account, pin);
     }
 
     public String getAtmMenu(){
-        screen.displayMessage("Please choose an action:");
-        Arrays.stream(Actions.values()).forEach(action -> screen.displayMessage(action.ordinal() + 1 + ". " + action.toString().replace("_", " ")));
-
-        String menuIndex = keyPad.getInput();
-        return menuIndex.matches("\\d+") ? menuIndex : "-1";
+        StringBuilder menu = new StringBuilder();
+        Arrays.stream(Actions.values()).forEach(action -> menu.append(action.ordinal() + 1 + ". " + action.toString() + "\n"));
+        return menu.toString();
     }
 
-    public void execute(int actionIndex){
-        if(actionIndex > 0 && Arrays.stream(Actions.values()).count() >= actionIndex){
-            Actions action = Actions.values()[actionIndex - 1];
-
-            switch (action){
-                case BALANCE_INQUIRY:
-                    screen.displayMessage("Balance: " + bank.getAccountBalance(account) + " " + bank.getAccountCurrency(account));
-                    break;
-                case WITHDRAWAL:
-                    double amountWithdrawal = getEnteredAmount();
-                    if(!isAmountIllegal(amountWithdrawal)){
-                        withdrawal(amountWithdrawal);
-                    }
-                    break;
-                case DEPOSIT:
-                    double amountDeposit = getEnteredAmount();
-                    if(!isAmountIllegal(amountDeposit)){
-                        deposit(amountDeposit);
-                    }
-                    break;
-                case EXIT:
-                    screen.displayMessage("See you later!");
-                    isExit = true;
-                    break;
-            }
-        }
+    public Map<String, String> getAccountBalance(String account){
+        Map<String, String> balance = new HashMap<>(2);
+        balance.put("amount", bank.getAccountBalance(account).toString());
+        balance.put("currency", bank.getAccountCurrency(account).toString());
+        return balance;
     }
 
-    private void withdrawal(double amount){
-        double accountBalance = Double.parseDouble(bank.getAccountBalance(account));
+    public void withdrawal(String account, double  amount) throws AtmAmountException{
+        double accountBalance = bank.getAccountBalance(account);;
+
         if(amount > accountBalance){
-            screen.displayMessage("You don't have enough money.");
+            throw new AtmAmountException("Account don't have enough money");
         }
         else{
             if(cashDispenser.decreaseDispenser(amount)){
                 bank.decreaseBalance(account, amount);
             }
             else{
-                screen.displayMessage("ATM doesn't have enough money.");
+                throw new AtmAmountException("ATM doesn't have enough money");
             }
         }
     }
 
-    private void deposit(double amount){
+    public void deposit(String account, double amount){
         cashDispenser.increaseDispenser(amount);
         bank.increaseBalance(account, amount);
     }
 
-    private double getEnteredAmount(){
-        screen.displayMessage("Enter amount:");
-        String amount = keyPad.getInput();
-        return amount.matches("[\\d.]+") ? Double.parseDouble(amount) : 0;
-    }
-
-    private boolean isAmountIllegal(double amount){
-        if(amount <= 0){
-            screen.displayMessage("Amount cannot be 0 or less than 0.");
-            return true;
-        }
-        return false;
-    }
-
-    public boolean getIsExit(){
-        return isExit;
-    }
 
 }
