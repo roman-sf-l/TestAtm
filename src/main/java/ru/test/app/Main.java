@@ -79,10 +79,6 @@ public class Main {
         //getAnnotationConfigContext();
     }
 
-    public static void getBalance(){
-
-    }
-
     public static void getAnnotationConfigContext(){
         ApplicationContext context = new AnnotationConfigApplicationContext(Main.class);
         Config obj =  context.getBean("config", Config.class);
