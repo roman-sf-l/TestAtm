@@ -1,24 +1,27 @@
 package ru.test.app;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.ComponentScan;
 import ru.test.app.atm.*;
 import ru.test.app.config.Config;
 import ru.test.app.exception.AtmAmountException;
+import ru.test.app.processing.SberBank;
 
 import java.util.HashMap;
 import java.util.Map;
 
 @ComponentScan(basePackages = "ru.test.app.config")
+@Slf4j
 public class Main {
 
     public static void main(String[] args) {
         Screen screen = new Screen();
         KeyPad keyPad = new KeyPad();
 
-        //initialize ATM cash dispenser
-        ATM atm = new ATM(new CashDispenser(1000));
+        //initialize ATM with cash dispenser and Bank
+        ATM atm = new ATM(new CashDispenser(1000), new SberBank());
 
         screen.displayMessage("Please enter a card number:");
         String account = keyPad.getInput();
@@ -50,10 +53,9 @@ public class Main {
                         try {
                             atm.withdrawal(account, amount);
                         } catch (AtmAmountException e) {
-                            System.out.println("Error: " + e.getMessage());
+                            log.error("Error: " + e.getMessage());
                             throw new RuntimeException(e);
                         }
-
                     }
                     break;
                 case DEPOSIT:
