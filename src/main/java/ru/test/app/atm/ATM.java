@@ -27,7 +27,7 @@ public class ATM {
 
     public String getAtmMenu(){
         StringBuilder menu = new StringBuilder();
-        Arrays.stream(Actions.values()).forEach(action -> menu.append(action.ordinal() + 1 + ". " + action.toString() + "\n"));
+        Arrays.stream(Action.values()).forEach(action -> menu.append(action.ordinal() + 1 + ". " + action.toString() + "\n"));
         return menu.toString();
     }
 

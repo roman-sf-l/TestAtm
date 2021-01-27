@@ -38,7 +38,7 @@ public class Main {
             Map<String, String> balance = new HashMap<>(2);
             double amount = 0;
 
-            switch (Actions.valueOf(action.toUpperCase())){
+            switch (Action.valueOf(action.toUpperCase())){
                 case BALANCE:
                     break;
                 case WITHDRAWAL:

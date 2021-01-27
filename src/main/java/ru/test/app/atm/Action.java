@@ -1,6 +1,6 @@
 package ru.test.app.atm;
 
-public enum Actions {
+public enum Action {
     BALANCE,
     WITHDRAWAL,
     DEPOSIT
