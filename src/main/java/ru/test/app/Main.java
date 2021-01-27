@@ -29,9 +29,6 @@ public class Main {
         screen.displayMessage("Please enter a card pin:");
         String pin = keyPad.getInput();
 
-        account = "1234567891234567";
-        pin = "1234";
-
         if(atm.checkAccount(account, pin)){
             screen.displayMessage("Choose an action:");
             screen.displayMessage(atm.getAtmMenu());
