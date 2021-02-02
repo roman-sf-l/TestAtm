@@ -1,8 +1,15 @@
 package ru.test.app.atm;
 
+import lombok.Data;
+
+@Data
 public class CashDispenser {
 
-    private static double cashAmount = 100000;
+    private double cashAmount;
+
+    public CashDispenser(double cashAmount) {
+        this.cashAmount = cashAmount;
+    }
 
     public void increaseDispenser(double amount){
         cashAmount += amount;
